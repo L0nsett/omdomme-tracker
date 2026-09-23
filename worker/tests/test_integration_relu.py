@@ -174,3 +174,15 @@ def test_hourly_catches_up_a_lost_backfill(db, relu_in_db, mocked_apis, worker_e
     serper_calls = mocked_apis.routes[6].call_count
     assert cli.main(["backfill", "--profile-id", RELU_ID]) == 0
     assert mocked_apis.routes[6].call_count == serper_calls
+
+
+def test_logs_never_contain_search_terms(
+    db, relu_in_db, mocked_apis, worker_env, caplog, capsys
+) -> None:
+    import logging
+
+    caplog.set_level(logging.DEBUG)
+    assert cli.main(["backfill", "--profile-id", RELU_ID]) == 0
+    assert cli.main(["hourly"]) == 0
+    logged = caplog.text + capsys.readouterr().out
+    assert "ReLU" not in logged and "relu" not in logged.lower().replace("relu_", "")

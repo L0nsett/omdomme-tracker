@@ -52,6 +52,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
     )
+    # httpx logs every request URL at INFO; those URLs carry search terms, and
+    # Actions logs are public.
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
     settings = load_settings()
     if not settings.database_url:
         log.error("DATABASE_URL is not set")
