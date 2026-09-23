@@ -24,3 +24,6 @@ worker/.cache/
 
 # Claude Code worktrees
 .claude/worktrees/
+
+# Private notes and docs: kept locally, never published
+*.md
