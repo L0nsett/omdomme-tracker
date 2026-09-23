@@ -127,3 +127,14 @@ def test_leave_profile_transfers_ownership_then_deletes(db: psycopg.Connection) 
     db.execute("select public.leave_profile()")
     db.execute("reset role")
     assert db.execute("select count(*) from profiles").fetchone()[0] == 0
+
+
+def test_list_profile_members_only_own_profile(db: psycopg.Connection) -> None:
+    alice = new_user(db, "alice@example.com")
+    bob = new_user(db, "bob@example.com")
+    create_profile(db, alice, "Alice AS")
+    create_profile(db, bob, "Bob AS")
+    as_user(db, alice)
+    rows = db.execute("select email, role from public.list_profile_members()").fetchall()
+    db.execute("reset role")
+    assert rows == [("alice@example.com", "owner")]
