@@ -40,6 +40,9 @@ REDDIT_SEARCH_URL = "https://oauth.reddit.com/search"
 REDDIT_WEB = "https://www.reddit.com"
 
 PAGE_SIZE = 100
+# The hourly job and one backfill job may run at the same time (separate
+# concurrency groups), so each process uses at most half of Reddit's limit.
+REQUESTS_PER_MINUTE_PER_PROCESS = REDDIT_MAX_REQUESTS_PER_MINUTE // 2
 # Backfill pages per term: Reddit search stops around 1000 results anyway.
 BACKFILL_MAX_PAGES = 10
 SNIPPET_CHARS = 500
@@ -123,7 +126,7 @@ class RedditCollector(Collector):
         now = self._monotonic()
         while self._recent and now - self._recent[0] >= 60:
             self._recent.popleft()
-        if len(self._recent) >= REDDIT_MAX_REQUESTS_PER_MINUTE:
+        if len(self._recent) >= REQUESTS_PER_MINUTE_PER_PROCESS:
             self._sleep(60 - (now - self._recent[0]))
             self._recent.popleft()
         self._recent.append(self._monotonic())
@@ -174,14 +177,14 @@ class RedditCollector(Collector):
 
         batch = Batch("reddit")
         max_pages = BACKFILL_MAX_PAGES if mode is FetchMode.BACKFILL else 1
-        for term in profile.search_terms:
+        for n, term in enumerate(profile.search_terms, start=1):
             after: str | None = None
             for page in range(max_pages):
                 try:
                     resp = self._get(self.request_params(term, mode, since, after))
                     items, after = parse_listing(resp.json())
                 except (httpx.HTTPError, ValueError) as exc:
-                    batch.failed(f"term {term!r} page {page + 1}", exc)
+                    batch.failed(f"term #{n} page {page + 1}", exc)
                     break
                 batch.succeeded()
                 batch.add(items)

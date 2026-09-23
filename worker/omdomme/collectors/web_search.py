@@ -110,7 +110,7 @@ class WebSearchCollector(Collector):
         batch = Batch("web_search")
         excluded: set[WebSearchProvider] = set()
         sent = 0
-        for term in profile.search_terms:
+        for n, term in enumerate(profile.search_terms, start=1):
             while True:
                 now = ensure_utc(self._clock())
                 provider = self._choose(mode, now, excluded)
@@ -126,13 +126,13 @@ class WebSearchCollector(Collector):
                 try:
                     items = self._search(provider, term, now)
                 except httpx.HTTPStatusError as exc:
-                    batch.failed(f"{provider.value} term {term!r}", exc)
+                    batch.failed(f"{provider.value} term #{n}", exc)
                     if exc.response.status_code in PROVIDER_DOWN_STATUS:
                         excluded.add(provider)
                         continue  # same term, next provider
                     break
                 except (httpx.HTTPError, ValueError) as exc:
-                    batch.failed(f"{provider.value} term {term!r}", exc)
+                    batch.failed(f"{provider.value} term #{n}", exc)
                     break
                 batch.succeeded()
                 batch.add(items)

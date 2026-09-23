@@ -103,7 +103,7 @@ class GdeltCollector(Collector):
                 resp.raise_for_status()
                 items = parse_artlist(resp.text)
             except (httpx.HTTPError, ValueError) as exc:
-                batch.failed(f"term {term!r}", exc)
+                batch.failed(f"term #{i + 1}", exc)
                 continue
             batch.succeeded()
             batch.add(items)

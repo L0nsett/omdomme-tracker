@@ -125,6 +125,28 @@ def set_backfill_status(conn: psycopg.Connection, profile_id: UUID, status: Back
     )
 
 
+def claim_backfill(conn: psycopg.Connection, profile_id: UUID, *, force: bool = False) -> bool:
+    """Atomically mark a backfill as running. False if one already ran or is running,
+    so a repeated dispatch can't spend the one-time Serper quota twice."""
+    row = conn.execute(
+        "update public.profiles set backfill_status = 'running'"
+        " where id = %s and (%s or backfill_status in ('pending', 'failed'))"
+        " returning id",
+        (profile_id, force),
+    ).fetchone()
+    return row is not None
+
+
+def stale_pending_backfills(conn: psycopg.Connection, created_before: datetime) -> list[UUID]:
+    """Profiles whose backfill never started (e.g. a queued Actions run was dropped)."""
+    rows = conn.execute(
+        "select id from public.profiles where backfill_status = 'pending' and created_at < %s"
+        " order by created_at",
+        (created_before,),
+    ).fetchall()
+    return [r[0] for r in rows]
+
+
 def set_last_web_search_at(conn: psycopg.Connection, profile_id: UUID, when: datetime) -> None:
     conn.execute(
         "update public.profiles set last_web_search_at = %s where id = %s",

@@ -51,6 +51,10 @@ class ProfileNotFound(LookupError):
     pass
 
 
+class BackfillNotNeeded(RuntimeError):
+    """The profile's backfill already ran or is running (use force to repeat it)."""
+
+
 @dataclass
 class _SourceTally:
     fetched: int = 0
@@ -219,7 +223,7 @@ def _run_profile(
         except Exception as exc:
             src.failed += 1
             src.errors.append(describe_error(exc))
-            log.exception("%s failed for profile %s", name, profile.id)
+            log.error("%s failed for profile %s: %s", name, profile.id, describe_error(exc))
     if web_search_attempted:
         # Also after an error: credits may have been spent, so wait for the next slot.
         storage.set_last_web_search_at(conn, profile.id, now)
@@ -234,7 +238,7 @@ def _web_search_due(
         src = tally.source(SourceType.WEB_SEARCH.value)
         src.failed += 1
         src.errors.append(describe_error(exc))
-        log.exception("quota check failed for profile %s", profile.id)
+        log.error("quota check failed for profile %s: %s", profile.id, describe_error(exc))
         return False
 
 
@@ -274,10 +278,10 @@ def run_hourly(
                 )
             except Exception as exc:
                 tally.run_errors.append(f"profile: {describe_error(exc)}")
-                log.exception("hourly run failed for profile %s", profile.id)
+                log.error("hourly run failed for profile %s: %s", profile.id, describe_error(exc))
     except Exception as exc:
         tally.run_errors.append(f"run: {describe_error(exc)}")
-        log.exception("hourly run failed")
+        log.error("hourly run failed: %s", describe_error(exc))
     return _finish(conn, run_id, tally, now)
 
 
@@ -289,15 +293,20 @@ def run_backfill(
     scorer: ReachScorer,
     classifier: Classifier,
     now: datetime,
+    *,
+    force: bool = False,
 ) -> RunReport:
     """Fetch history for one profile. Web search always runs (Serper first).
 
-    Sets `backfill_status` running -> done/failed. Raises `ProfileNotFound`.
+    Claims the backfill atomically (pending/failed -> running, then done/failed).
+    Raises `ProfileNotFound`, or `BackfillNotNeeded` if it already ran or is
+    running and `force` is false.
     """
     profile = storage.load_profile(conn, profile_id)
     if profile is None:
         raise ProfileNotFound(str(profile_id))
-    storage.set_backfill_status(conn, profile.id, BackfillStatus.RUNNING)
+    if not storage.claim_backfill(conn, profile.id, force=force):
+        raise BackfillNotNeeded(str(profile.id))
     run_id = storage.start_run(conn, "backfill", now, profile_id=profile.id)
     tally = _Tally(profiles=1)
     try:
@@ -316,7 +325,7 @@ def run_backfill(
         )
     except Exception as exc:
         tally.run_errors.append(f"run: {describe_error(exc)}")
-        log.exception("backfill failed for profile %s", profile.id)
+        log.error("backfill failed for profile %s: %s", profile.id, describe_error(exc))
     report = _finish(conn, run_id, tally, now)
     final = BackfillStatus.DONE if report.status == "success" else BackfillStatus.FAILED
     storage.set_backfill_status(conn, profile.id, final)

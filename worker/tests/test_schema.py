@@ -138,3 +138,40 @@ def test_list_profile_members_only_own_profile(db: psycopg.Connection) -> None:
     rows = db.execute("select email, role from public.list_profile_members()").fetchall()
     db.execute("reset role")
     assert rows == [("alice@example.com", "owner")]
+
+
+def test_rule_count_and_size_limits_hold_even_via_rpc(db: psycopg.Connection) -> None:
+    alice = new_user(db, "alice@example.com")
+    as_user(db, alice)
+    too_many = json.dumps([{"term": f"t{i}", "context_terms": []} for i in range(51)])
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute("select public.create_profile('Big', null, '{}', %s)", (too_many,))
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(
+            "select public.create_profile('Long', null, '{}', %s)",
+            (json.dumps([{"term": "x" * 101}]),),
+        )
+    db.execute("reset role")
+    assert db.execute("select count(*) from profiles").fetchone()[0] == 0
+
+
+def test_client_cannot_choose_invite_token_or_expiry(db: psycopg.Connection) -> None:
+    alice = new_user(db, "alice@example.com")
+    pa = create_profile(db, alice, "Alice AS")
+    as_user(db, alice)
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        db.execute(
+            "insert into invites (profile_id, created_by, token, expires_at)"
+            " values (%s, %s, 'a', '2999-01-01')",
+            (pa, alice),
+        )
+    db.execute("reset role")
+
+
+def test_users_cannot_truncate(db: psycopg.Connection) -> None:
+    alice = new_user(db, "alice@example.com")
+    create_profile(db, alice, "Alice AS")
+    as_user(db, alice)
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        db.execute("truncate mentions")
+    db.execute("reset role")

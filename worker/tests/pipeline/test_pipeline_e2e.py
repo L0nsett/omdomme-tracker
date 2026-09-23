@@ -89,9 +89,16 @@ def hourly(conn, collectors, quota=None, now=NOW) -> pipeline.RunReport:
     )
 
 
-def backfill(conn, profile_id, collectors, now=NOW) -> pipeline.RunReport:
+def backfill(conn, profile_id, collectors, now=NOW, force=True) -> pipeline.RunReport:
     return pipeline.run_backfill(
-        conn, profile_id, collectors, KeywordMatcher(), tranco_scorer(), NullClassifier(), now
+        conn,
+        profile_id,
+        collectors,
+        KeywordMatcher(),
+        tranco_scorer(),
+        NullClassifier(),
+        now,
+        force=force,
     )
 
 
@@ -374,3 +381,25 @@ def test_bad_item_is_skipped_not_fatal(db, relu: Profile) -> None:
     )
     assert report.status == "success"
     assert report.stats["inserted"] == 2  # 3 matches minus the bad one
+
+
+def test_backfill_is_claimed_once(db, relu: Profile) -> None:
+    db.execute("update profiles set backfill_status = 'pending' where id = %s", (relu.id,))
+    assert backfill(db, relu.id, good_collectors(), force=False).status == "success"
+    # A second dispatch (e.g. the user clicking again) must not spend Serper again.
+    with pytest.raises(pipeline.BackfillNotNeeded):
+        backfill(db, relu.id, good_collectors(), force=False)
+    # A failed backfill may be retried.
+    storage.set_backfill_status(db, relu.id, BackfillStatus.FAILED)
+    assert backfill(db, relu.id, good_collectors(), force=False).status == "success"
+
+
+def test_stale_pending_backfills(db, relu: Profile) -> None:
+    db.execute(
+        "update profiles set backfill_status = 'pending', created_at = %s where id = %s",
+        (NOW - timedelta(hours=1), relu.id),
+    )
+    assert storage.stale_pending_backfills(db, NOW - timedelta(minutes=20)) == [relu.id]
+    assert storage.stale_pending_backfills(db, NOW - timedelta(hours=2)) == []
+    storage.claim_backfill(db, relu.id)
+    assert storage.stale_pending_backfills(db, NOW - timedelta(minutes=20)) == []

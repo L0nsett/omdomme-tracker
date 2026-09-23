@@ -26,20 +26,20 @@ describe("githubConfigFromEnv", () => {
 });
 
 describe("dispatchBackfill", () => {
-  it("posts a repository_dispatch with the right URL, headers and body", async () => {
+  it("posts a workflow_dispatch with the right URL, headers and body", async () => {
     const fetchImpl = mockFetch(new Response(null, { status: 204 }));
     const result = await dispatchBackfill(PROFILE, CONFIG, fetchImpl as unknown as typeof fetch);
     expect(result).toEqual({ ok: true });
     expect(fetchImpl).toHaveBeenCalledTimes(1);
     const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
-    expect(url).toBe("https://api.github.com/repos/owner/omdomme-tracker/dispatches");
+    expect(url).toBe("https://api.github.com/repos/owner/omdomme-tracker/actions/workflows/backfill.yml/dispatches");
     expect(url).toBe(dispatchUrl(CONFIG.repo));
     expect(init.method).toBe("POST");
     const headers = init.headers as Record<string, string>;
     expect(headers.Authorization).toBe("Bearer test-token-not-real");
     expect(headers.Accept).toBe("application/vnd.github+json");
     expect(headers["X-GitHub-Api-Version"]).toBe("2022-11-28");
-    expect(JSON.parse(init.body as string)).toEqual({ event_type: "backfill", client_payload: { profile_id: PROFILE } });
+    expect(JSON.parse(init.body as string)).toEqual({ ref: "main", inputs: { profile_id: PROFILE } });
   });
 
   it("reports GitHub errors with status and message", async () => {
@@ -81,7 +81,7 @@ describe("startBackfill", () => {
     });
     expect(out.status).toBe(202);
     const [, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
-    expect(JSON.parse(init.body as string).client_payload.profile_id).toBe(PROFILE);
+    expect(JSON.parse(init.body as string).inputs.profile_id).toBe(PROFILE);
   });
 
   it("returns 403 without a profile and never calls GitHub", async () => {

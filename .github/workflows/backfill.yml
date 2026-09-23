@@ -1,9 +1,10 @@
 name: Backfill
 
 # Started by the web app when a profile is created:
-#   POST /repos/{owner}/{repo}/dispatches
-#   {"event_type": "backfill", "client_payload": {"profile_id": "<uuid>"}}
-# or by hand from the Actions tab.
+#   POST /repos/{owner}/{repo}/actions/workflows/backfill.yml/dispatches
+#   {"ref": "main", "inputs": {"profile_id": "<uuid>"}}
+# (needs only a fine-grained token with "Actions: write"), or by hand from the
+# Actions tab. repository_dispatch is kept as an alternative trigger.
 on:
   repository_dispatch:
     types: [backfill]
@@ -17,9 +18,12 @@ on:
 permissions:
   contents: read
 
-# One backfill per profile at a time (a group name is not a shell context).
+# One backfill at a time across all profiles, so parallel runs can't exceed
+# Reddit's rate limit together (the hourly job is the only other process).
+# GitHub keeps only the newest pending run in a group; a dropped one is picked up
+# by the hourly job (profiles still `pending` after 20 minutes).
 concurrency:
-  group: backfill-${{ github.event.client_payload.profile_id || inputs.profile_id }}
+  group: backfill
   cancel-in-progress: false
 
 jobs:

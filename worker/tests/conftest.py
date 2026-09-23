@@ -56,6 +56,9 @@ def _migrated_db() -> str:
         with psycopg.connect(TEST_DATABASE_URL, connect_timeout=3):
             pass
     except psycopg.OperationalError as exc:
+        # In CI a missing database must fail loudly, not turn every db test into a skip.
+        if os.environ.get("CI") or os.environ.get("REQUIRE_DB"):
+            pytest.fail(f"test Postgres not reachable at {TEST_DATABASE_URL}: {exc}")
         pytest.skip(f"test Postgres not reachable at {TEST_DATABASE_URL}: {exc}")
     subprocess.run(
         [str(ROOT / "scripts" / "reset-test-db.sh")],

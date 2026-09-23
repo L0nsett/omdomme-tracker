@@ -12,10 +12,19 @@ export const dynamic = "force-dynamic";
 const linkButton =
   "inline-flex w-full items-center justify-center rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700";
 
+/** decodeURIComponent that returns "" (an invalid token) instead of throwing on bad % sequences. */
+function safeDecode(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return "";
+  }
+}
+
 /** Invite landing page. The middleware sends signed-out visitors to /login?next=/invite/<token>. */
 export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
   const { token: rawToken } = await params;
-  const token = parseInviteToken(decodeURIComponent(rawToken));
+  const token = parseInviteToken(safeDecode(rawToken));
   if (!token) {
     return (
       <AuthCard title="Invalid invite link" subtitle="This link is not a valid invite. Check that you copied all of it.">

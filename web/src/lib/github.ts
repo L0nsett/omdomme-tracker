@@ -1,6 +1,7 @@
 /**
- * Starts a backfill run in GitHub Actions via repository_dispatch.
+ * Starts a backfill run in GitHub Actions via workflow_dispatch of backfill.yml.
  * Server-only: uses GITHUB_DISPATCH_TOKEN, which must never be exposed to the browser.
+ * The token only needs "Actions: read and write" on this repository (not Contents).
  */
 
 export interface GithubDispatchConfig {
@@ -23,12 +24,15 @@ export function githubConfigFromEnv(env: Record<string, string | undefined> = pr
   return { token, repo };
 }
 
+export const BACKFILL_WORKFLOW = "backfill.yml";
+export const BACKFILL_REF = "main";
+
 export function dispatchUrl(repo: string): string {
-  return `https://api.github.com/repos/${repo}/dispatches`;
+  return `https://api.github.com/repos/${repo}/actions/workflows/${BACKFILL_WORKFLOW}/dispatches`;
 }
 
 /**
- * POST /repos/{repo}/dispatches with event_type "backfill". GitHub answers 204 on success.
+ * POST /repos/{repo}/actions/workflows/backfill.yml/dispatches. GitHub answers 204 on success.
  */
 export async function dispatchBackfill(
   profileId: string,
@@ -53,7 +57,7 @@ export async function dispatchBackfill(
         "Content-Type": "application/json",
         "User-Agent": "omdomme-tracker",
       },
-      body: JSON.stringify({ event_type: "backfill", client_payload: { profile_id: profileId } }),
+      body: JSON.stringify({ ref: BACKFILL_REF, inputs: { profile_id: profileId } }),
       cache: "no-store",
     });
   } catch (err) {

@@ -6,7 +6,7 @@ import httpx
 import pytest
 
 from omdomme.collectors import CollectorError, RedditCollector
-from omdomme.collectors.reddit import time_filter
+from omdomme.collectors.reddit import REQUESTS_PER_MINUTE_PER_PROCESS, time_filter
 from omdomme.contracts import CollectorUnavailable, FetchMode, SourceType
 from omdomme.limits import REDDIT_MAX_REQUESTS_PER_MINUTE
 
@@ -249,8 +249,10 @@ def test_throttle_stays_under_rate_limit(mock_http, clock, load_fixture, relu_pr
         t["now"] += s
 
     collector = make(rec, clock, sleep=sleep, monotonic=lambda: t["now"])
-    rounds = REDDIT_MAX_REQUESTS_PER_MINUTE // 2 + 1  # 2 requests per round
+    # Each process uses half of Reddit's limit (hourly + one backfill may overlap).
+    assert REQUESTS_PER_MINUTE_PER_PROCESS * 2 <= REDDIT_MAX_REQUESTS_PER_MINUTE
+    rounds = REQUESTS_PER_MINUTE_PER_PROCESS // 2 + 1  # 2 requests per round
     for _ in range(rounds):
         collector.collect(relu_profile, mode=FetchMode.HOURLY)
     assert len(rec.to("oauth.reddit.com")) == rounds * 2
-    assert sleeps == [60.0]  # request 101 waits for the window to roll over
+    assert sleeps == [60.0]  # request 51 waits for the window to roll over

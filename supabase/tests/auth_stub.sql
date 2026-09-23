@@ -16,6 +16,14 @@ begin
 end
 $$;
 
+-- Like hosted Supabase: anon/authenticated get ALL on new public objects by
+-- default. Migrations must revoke what they don't want; tests run with this so
+-- missing revokes show up as failing RLS tests.
+grant usage on schema public to anon, authenticated, service_role;
+alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
+alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
+alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
+
 create schema if not exists auth;
 grant usage on schema auth to anon, authenticated, service_role;
 

@@ -161,3 +161,16 @@ def test_relu_ntnu_end_to_end(db, relu_in_db, mocked_apis, worker_env, load_fixt
     assert db.execute(
         "select bool_and(hidden) from mentions where source_type='reddit'"
     ).fetchone()[0]
+
+
+def test_hourly_catches_up_a_lost_backfill(db, relu_in_db, mocked_apis, worker_env) -> None:
+    # The profile was created long ago but its backfill dispatch never ran.
+    assert cli.main(["hourly"]) == 0
+    status = db.execute("select backfill_status from profiles where id=%s", (RELU_ID,)).fetchone()
+    assert status[0] == "done"
+    kinds = [r[0] for r in db.execute("select kind from runs order by started_at")]
+    assert kinds == ["hourly", "backfill"]
+    # A later dispatch for the same profile is a no-op (no second Serper spend).
+    serper_calls = mocked_apis.routes[6].call_count
+    assert cli.main(["backfill", "--profile-id", RELU_ID]) == 0
+    assert mocked_apis.routes[6].call_count == serper_calls

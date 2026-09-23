@@ -69,7 +69,7 @@ class GoogleNewsCollector(Collector):
         self, profile: Profile, *, mode: FetchMode, since: datetime | None = None
     ) -> list[RawMention]:
         batch = Batch("google_news")
-        for term in profile.search_terms:
+        for n, term in enumerate(profile.search_terms, start=1):
             for edition in EDITIONS:
                 params = self.request_params(term, edition, mode, since)
                 try:
@@ -77,7 +77,7 @@ class GoogleNewsCollector(Collector):
                     resp.raise_for_status()
                     items = parse_rss(resp.text)
                 except (httpx.HTTPError, ET.ParseError) as exc:
-                    batch.failed(f"term {term!r} ({edition[2]})", exc)
+                    batch.failed(f"term #{n} ({edition[2]})", exc)
                     continue
                 batch.succeeded()
                 batch.add(items)

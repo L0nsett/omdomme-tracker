@@ -11,14 +11,14 @@ from __future__ import annotations
 import argparse
 import logging
 from collections.abc import Sequence
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from uuid import UUID
 
 import httpx
 import psycopg
 
-from omdomme import pipeline
+from omdomme import pipeline, storage
 from omdomme.config import load_settings
 from omdomme.contracts import NullClassifier
 from omdomme.matching import KeywordMatcher
@@ -29,6 +29,9 @@ log = logging.getLogger("omdomme")
 # worker/.cache (cached in Actions between runs; ignored by git).
 CACHE_DIR = Path(__file__).resolve().parents[1] / ".cache"
 HTTP_TIMEOUT = httpx.Timeout(30.0, connect=10.0)
+# A profile still `pending` this long after creation lost its backfill dispatch
+# (e.g. a queued Actions run was dropped); the hourly job runs it instead.
+STALE_BACKFILL_AFTER = timedelta(minutes=20)
 USER_AGENT = "omdomme-tracker/0.1 (+https://github.com/L0nsett/omdomme-tracker)"
 
 
@@ -38,6 +41,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("hourly", help="collect new mentions for every profile")
     backfill = sub.add_parser("backfill", help="fetch history for one new profile")
     backfill.add_argument("--profile-id", required=True, type=UUID, help="profile uuid")
+    backfill.add_argument(
+        "--force", action="store_true", help="run again even if the backfill already ran"
+    )
     return parser
 
 
@@ -60,7 +66,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     with (
         psycopg.connect(settings.database_url, autocommit=True, prepare_threshold=None) as conn,
         httpx.Client(
-            timeout=HTTP_TIMEOUT, follow_redirects=True, headers={"User-Agent": USER_AGENT}
+            # No redirects: custom API key headers (Exa, Serper) would be forwarded.
+            timeout=HTTP_TIMEOUT,
+            follow_redirects=False,
+            headers={"User-Agent": USER_AGENT},
         ) as http,
     ):
         quota = PostgresQuotaManager(conn)
@@ -71,14 +80,38 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         if args.command == "hourly":
             report = pipeline.run_hourly(conn, collectors, matcher, scorer, classifier, quota, now)
-        else:
-            try:
-                report = pipeline.run_backfill(
-                    conn, args.profile_id, collectors, matcher, scorer, classifier, now
-                )
-            except pipeline.ProfileNotFound:
-                log.error("profile %s not found", args.profile_id)
-                return 2
+            ok = report.status == "success"
+            print(f"hourly run {report.run_id}: {report.status} {report.stats}")
+            for profile_id in storage.stale_pending_backfills(conn, now - STALE_BACKFILL_AFTER):
+                try:
+                    late = pipeline.run_backfill(
+                        conn, profile_id, collectors, matcher, scorer, classifier, now
+                    )
+                except (pipeline.BackfillNotNeeded, pipeline.ProfileNotFound):
+                    continue
+                print(f"catch-up backfill run {late.run_id}: {late.status} {late.stats}")
+                ok = ok and late.status == "success"
+            return 0 if ok else 1
 
-    print(f"{args.command} run {report.run_id}: {report.status} {report.stats}")
+        try:
+            report = pipeline.run_backfill(
+                conn,
+                args.profile_id,
+                collectors,
+                matcher,
+                scorer,
+                classifier,
+                now,
+                force=args.force,
+            )
+        except pipeline.ProfileNotFound:
+            log.error("profile %s not found", args.profile_id)
+            return 2
+        except pipeline.BackfillNotNeeded:
+            print(
+                f"backfill for {args.profile_id} already ran or is running; use --force to repeat"
+            )
+            return 0
+
+    print(f"backfill run {report.run_id}: {report.status} {report.stats}")
     return 0 if report.status == "success" else 1
