@@ -142,3 +142,32 @@ def test_all_failed_raises(mock_http, clock, relu_profile):
     rec = mock_http(lambda req: httpx.Response(429))
     with pytest.raises(CollectorError, match="HTTP 429"):
         make(rec, clock).collect(relu_profile, mode=FetchMode.HOURLY)
+
+
+def test_retries_once_after_rate_limit_or_timeout(
+    mock_http, clock, one_term_profile, load_fixture
+) -> None:
+    body = json.dumps(load_fixture("gdelt_relu.json"))
+    for first in (httpx.Response(429, text="Please limit requests"), "timeout"):
+        calls: list[int] = []
+
+        def handler(request: httpx.Request, first=first, calls=calls) -> httpx.Response:
+            calls.append(1)
+            if len(calls) == 1:
+                if first == "timeout":
+                    raise httpx.ConnectTimeout("slow", request=request)
+                return first
+            return httpx.Response(200, text=body)
+
+        sleeps: list[float] = []
+        items = make(mock_http(handler), clock, sleeps).collect(
+            one_term_profile, mode=FetchMode.BACKFILL
+        )
+        assert len(calls) == 2 and sleeps == [10.0]
+        assert len(items) == 4
+
+
+def test_gives_up_after_one_retry(mock_http, clock, one_term_profile) -> None:
+    rec = mock_http(lambda request: httpx.Response(429, text="Please limit requests"))
+    with pytest.raises(CollectorError):
+        make(rec, clock).collect(one_term_profile, mode=FetchMode.BACKFILL)

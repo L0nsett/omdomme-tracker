@@ -27,8 +27,12 @@ from omdomme.limits import GDELT_MAX_LOOKBACK, GDELT_MAX_RECORDS
 
 GDELT_DOC_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
 
-# GDELT asks for at most one request every few seconds.
-DEFAULT_PAUSE_SECONDS = 5.0
+# GDELT allows one request every 5 seconds (it answers 429 otherwise).
+DEFAULT_PAUSE_SECONDS = 6.0
+# GDELT is slow (15+ s per query is normal), so it gets a longer timeout than
+# the shared client, and one retry after a 429 or a timeout.
+GDELT_TIMEOUT = httpx.Timeout(60.0, connect=30.0)
+RETRY_PAUSE_SECONDS = 10.0
 # Hourly runs re-read this much before `since` (GDELT indexes with some delay).
 HOURLY_OVERLAP = timedelta(minutes=30)
 # Hourly window when no `since` is known.
@@ -91,6 +95,17 @@ class GdeltCollector(Collector):
             params["enddatetime"] = format_gdelt_datetime(now)
         return params
 
+    def _get(self, params: dict[str, str]) -> httpx.Response:
+        """GET with one retry after a rate limit (429) or a timeout."""
+        try:
+            resp = self._http.get(GDELT_DOC_URL, params=params, timeout=GDELT_TIMEOUT)
+            if resp.status_code != 429:
+                return resp
+        except httpx.TimeoutException:
+            pass
+        self._sleep(RETRY_PAUSE_SECONDS)
+        return self._http.get(GDELT_DOC_URL, params=params, timeout=GDELT_TIMEOUT)
+
     def collect(
         self, profile: Profile, *, mode: FetchMode, since: datetime | None = None
     ) -> list[RawMention]:
@@ -99,7 +114,7 @@ class GdeltCollector(Collector):
             if i and self._pause > 0:
                 self._sleep(self._pause)
             try:
-                resp = self._http.get(GDELT_DOC_URL, params=self.request_params(term, mode, since))
+                resp = self._get(self.request_params(term, mode, since))
                 resp.raise_for_status()
                 items = parse_artlist(resp.text)
             except (httpx.HTTPError, ValueError) as exc:

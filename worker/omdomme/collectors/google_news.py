@@ -26,9 +26,10 @@ from omdomme.contracts import Collector, FetchMode, Profile, RawMention, SourceT
 
 GOOGLE_NEWS_RSS_URL = "https://news.google.com/rss/search"
 
-# (hl, gl, ceid): the English and the Norwegian edition for Norway.
+# (hl, gl, ceid): the English (US) and the Norwegian edition. Google has no
+# English edition for Norway; NO:en redirects to US:en.
 EDITIONS: tuple[tuple[str, str, str], ...] = (
-    ("en", "NO", "NO:en"),
+    ("en-US", "US", "US:en"),
     ("no", "NO", "NO:no"),
 )
 

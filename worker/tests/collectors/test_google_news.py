@@ -62,7 +62,7 @@ def test_request_parameters_hourly_and_backfill(mock_http, clock, rss, one_term_
         r.url.host == "news.google.com" and r.url.path == "/rss/search" for r in rec.requests
     )
     assert hourly == [
-        {"q": '"ReLU NTNU" when:1d', "hl": "en", "gl": "NO", "ceid": "NO:en"},
+        {"q": '"ReLU NTNU" when:1d', "hl": "en-US", "gl": "US", "ceid": "US:en"},
         {"q": '"ReLU NTNU" when:1d', "hl": "no", "gl": "NO", "ceid": "NO:no"},
     ]
 
@@ -70,7 +70,7 @@ def test_request_parameters_hourly_and_backfill(mock_http, clock, rss, one_term_
     collector.collect(one_term_profile, mode=FetchMode.BACKFILL, since=NOW)
     backfill = [dict(r.url.params) for r in rec.requests]
     assert [p["q"] for p in backfill] == ['"ReLU NTNU"', '"ReLU NTNU"']
-    assert [p["ceid"] for p in backfill] == ["NO:en", "NO:no"]
+    assert [p["ceid"] for p in backfill] == ["US:en", "NO:no"]
 
 
 def test_when_operator_widens_after_missed_runs():
@@ -120,7 +120,7 @@ def test_skips_malformed_items(mock_http, clock, one_term_profile):
 
 def test_one_failing_request_keeps_the_others(mock_http, clock, rss, one_term_profile):
     def handler(req: httpx.Request) -> httpx.Response:
-        if req.url.params["ceid"] == "NO:en":
+        if req.url.params["ceid"] == "US:en":
             return httpx.Response(503)
         return httpx.Response(200, text=rss)
 
