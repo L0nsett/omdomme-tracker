@@ -1,0 +1,602 @@
+{
+  "now": "2026-09-23T09:00:00Z",
+  "users": [
+    {
+      "id": "aaaaaaaa-0000-4000-8000-000000000001",
+      "email": "leon@example.com"
+    },
+    {
+      "id": "aaaaaaaa-0000-4000-8000-000000000002",
+      "email": "member@example.com"
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000003",
+      "email": "outsider@example.com"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "name": "ReLU NTNU",
+      "website_url": "https://www.relu-ntnu.no",
+      "social_links": [
+        "https://www.instagram.com/relu_ntnu",
+        "https://www.linkedin.com/company/relu-ntnu"
+      ],
+      "created_at": "2026-09-20T09:00:00Z",
+      "backfill_status": "done",
+      "last_web_search_at": "2026-09-23T04:00:00Z"
+    },
+    {
+      "id": "22222222-2222-4222-8222-222222222222",
+      "name": "Other Org AS",
+      "website_url": "https://other.example",
+      "social_links": [],
+      "created_at": "2026-09-13T09:00:00Z",
+      "backfill_status": "done",
+      "last_web_search_at": null
+    }
+  ],
+  "profile_members": [
+    {
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "user_id": "aaaaaaaa-0000-4000-8000-000000000001",
+      "role": "owner",
+      "joined_at": "2026-09-20T09:00:00Z"
+    },
+    {
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "user_id": "aaaaaaaa-0000-4000-8000-000000000002",
+      "role": "member",
+      "joined_at": "2026-09-21T09:00:00Z"
+    },
+    {
+      "profile_id": "22222222-2222-4222-8222-222222222222",
+      "user_id": "bbbbbbbb-0000-4000-8000-000000000003",
+      "role": "owner",
+      "joined_at": "2026-09-13T09:00:00Z"
+    }
+  ],
+  "keyword_rules": [
+    {
+      "id": "33333333-0000-4000-8000-000000000001",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "term": "ReLU NTNU",
+      "context_terms": [],
+      "is_exclusion": false,
+      "created_at": "2026-09-20T09:00:00Z"
+    },
+    {
+      "id": "33333333-0000-4000-8000-000000000002",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "term": "ReLU",
+      "context_terms": [
+        "NTNU",
+        "Trondheim",
+        "studentorganisasjon",
+        "student organization",
+        "linjeforening"
+      ],
+      "is_exclusion": false,
+      "created_at": "2026-09-20T09:00:00Z"
+    },
+    {
+      "id": "33333333-0000-4000-8000-000000000003",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "term": "activation function",
+      "context_terms": [],
+      "is_exclusion": true,
+      "created_at": "2026-09-20T09:00:00Z"
+    },
+    {
+      "id": "33333333-0000-4000-8000-000000000004",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "term": "aktiveringsfunksjon",
+      "context_terms": [],
+      "is_exclusion": true,
+      "created_at": "2026-09-20T09:00:00Z"
+    },
+    {
+      "id": "33333333-0000-4000-8000-000000000005",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "term": "leaky ReLU",
+      "context_terms": [],
+      "is_exclusion": true,
+      "created_at": "2026-09-20T09:00:00Z"
+    },
+    {
+      "id": "33333333-0000-4000-8000-000000000009",
+      "profile_id": "22222222-2222-4222-8222-222222222222",
+      "term": "Other Org",
+      "context_terms": [],
+      "is_exclusion": false,
+      "created_at": "2026-09-13T09:00:00Z"
+    }
+  ],
+  "invites": [
+    {
+      "id": "66666666-0000-4000-8000-000000000001",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "token": "testinvitetoken0000000000000000000000000000000001",
+      "created_by": "aaaaaaaa-0000-4000-8000-000000000001",
+      "created_at": "2026-09-21T09:00:00Z",
+      "expires_at": "2026-09-28T09:00:00Z",
+      "used_at": null,
+      "used_by": null
+    }
+  ],
+  "mentions": [
+    {
+      "id": "44444444-0000-4000-8000-000000000001",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.universitetsavisa.no/relu-hackathon",
+      "title": "ReLU NTNU arrangerer AI-hackathon i Trondheim",
+      "snippet": "Over 150 studenter deltok da ReLU NTNU arrangerte sitt første hackathon.",
+      "source_type": "google_news",
+      "source_name": "universitetsavisa.no",
+      "published_at": "2026-09-21T20:00:00Z",
+      "fetched_at": "2026-09-21T21:00:00Z",
+      "reach_score": 0.41,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000002",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.universitetsavisa.no/relu-hackathon",
+      "title": "ReLU NTNU arrangerer AI-hackathon i Trondheim",
+      "snippet": "",
+      "source_type": "gdelt",
+      "source_name": "universitetsavisa.no",
+      "published_at": "2026-09-22T08:00:00Z",
+      "fetched_at": "2026-09-22T09:00:00Z",
+      "reach_score": 0.41,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000003",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.adressa.no/nyheter/relu-kvinner-maskinlaering",
+      "title": "Studentorganisasjonen ReLU vil ha flere kvinner inn i maskinlæring",
+      "snippet": "Studentorganisasjonen ved NTNU lanserer mentorprogram.",
+      "source_type": "google_news",
+      "source_name": "adressa.no",
+      "published_at": "2026-09-21T09:00:00Z",
+      "fetched_at": "2026-09-21T10:00:00Z",
+      "reach_score": 0.66,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000004",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.nrk.no/trondelag/ntnu-studenter-vant-ai",
+      "title": "NTNU-studenter vant nordisk AI-konkurranse med ReLU NTNU-lag",
+      "snippet": "Laget slo 40 andre universiteter.",
+      "source_type": "google_news",
+      "source_name": "nrk.no",
+      "published_at": "2026-09-18T07:00:00Z",
+      "fetched_at": "2026-09-18T08:00:00Z",
+      "reach_score": 0.78,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000005",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.itavisen.no/2026/09/19/relu-ntnu-nordic-student-ai-conference",
+      "title": "ReLU NTNU hosts Nordic student AI conference",
+      "snippet": "",
+      "source_type": "gdelt",
+      "source_name": "itavisen.no",
+      "published_at": "2026-09-19T03:00:00Z",
+      "fetched_at": "2026-09-19T04:00:00Z",
+      "reach_score": 0.49,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000006",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.adressa.no/nyheter/trondheim/relu-apen-kildekode-modell",
+      "title": "Trondheim-studenter i ReLU lanserer åpen kildekode-modell",
+      "snippet": "",
+      "source_type": "gdelt",
+      "source_name": "adressa.no",
+      "published_at": "2026-09-10T02:00:00Z",
+      "fetched_at": "2026-09-10T03:00:00Z",
+      "reach_score": 0.66,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000007",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.reddit.com/r/ntnu/comments/1abc01/anyone_joining_relu_ntnus_workshop_on_thursday/",
+      "title": "Anyone joining ReLU NTNU's workshop on Thursday?",
+      "snippet": "Heard they are doing an intro to LLM fine-tuning. Is it beginner friendly?",
+      "source_type": "reddit",
+      "source_name": "r/ntnu",
+      "published_at": "2026-09-21T17:00:00Z",
+      "fetched_at": "2026-09-21T18:00:00Z",
+      "reach_score": 0.35,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000008",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.reddit.com/r/norge/comments/1abc03/studentforeningen_relu_pa_ntnu_holder_gratis/",
+      "title": "Studentforeningen ReLU på NTNU holder gratis AI-kurs for alle",
+      "snippet": "Åpent for alle i Trondheim, ikke bare studenter.",
+      "source_type": "reddit",
+      "source_name": "r/norge",
+      "published_at": "2026-09-19T14:00:00Z",
+      "fetched_at": "2026-09-19T15:00:00Z",
+      "reach_score": 0.58,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000009",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.reddit.com/r/trondheim/comments/1abc04/gratis_aikurs_for_studenter_denne_helgen/",
+      "title": "Gratis AI-kurs for studenter denne helgen",
+      "snippet": "Påmelding her: https://www.relu-ntnu.no/events/ai-kurs-host-2026",
+      "source_type": "reddit",
+      "source_name": "r/trondheim",
+      "published_at": "2026-09-19T09:00:00Z",
+      "fetched_at": "2026-09-19T10:00:00Z",
+      "reach_score": 0.22,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000010",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.relu-ntnu.no/about",
+      "title": "ReLU NTNU – Student organization for AI at NTNU",
+      "snippet": "ReLU NTNU is a student organization in Trondheim that makes applied AI accessible to all students.",
+      "source_type": "web_search",
+      "source_name": "relu-ntnu.no",
+      "published_at": "2026-09-20T16:00:00Z",
+      "fetched_at": "2026-09-20T17:00:00Z",
+      "reach_score": 0.05,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000011",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.nidaros.no/studentfrivillige-trondheim",
+      "title": "Ti studentfrivillige som løfter Trondheim",
+      "snippet": "Blant dem finner vi AI-miljøet bak @relu_ntnu på Instagram.",
+      "source_type": "web_search",
+      "source_name": "nidaros.no",
+      "published_at": "2026-09-17T03:00:00Z",
+      "fetched_at": "2026-09-17T04:00:00Z",
+      "reach_score": 0.12,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000012",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.digi.no/artikler/studentene-som-bygger-norsk-ai/560123",
+      "title": "Studentene som bygger norsk AI",
+      "snippet": "Linjeforeningen ReLU ved NTNU har vokst til over 400 medlemmer.",
+      "source_type": "web_search",
+      "source_name": "digi.no",
+      "published_at": "2026-09-11T13:00:00Z",
+      "fetched_at": "2026-09-11T14:00:00Z",
+      "reach_score": 0.52,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000013",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.universitetsavisa.no/relu-ntnu-starter-opp",
+      "title": "ReLU NTNU starter opp: ny studentorganisasjon for kunstig intelligens",
+      "snippet": "En ny studentorganisasjon ved NTNU vil gjøre anvendt AI tilgjengelig for alle studenter.",
+      "source_type": "web_search",
+      "source_name": "universitetsavisa.no",
+      "published_at": "2025-02-02T16:00:00Z",
+      "fetched_at": "2025-02-02T17:00:00Z",
+      "reach_score": 0.41,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000014",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://universitetsavisa.no/sak-0",
+      "title": "ReLU NTNU på stand under Teknologiporten",
+      "snippet": "",
+      "source_type": "google_news",
+      "source_name": "universitetsavisa.no",
+      "published_at": "2026-09-07T20:00:00Z",
+      "fetched_at": "2026-09-07T21:00:00Z",
+      "reach_score": 0.44,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000015",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://adressa.no/sak-1",
+      "title": "Studentorganisasjonen ReLU inviterer til bedriftspresentasjon",
+      "snippet": "",
+      "source_type": "gdelt",
+      "source_name": "adressa.no",
+      "published_at": "2026-08-30T02:00:00Z",
+      "fetched_at": "2026-08-30T03:00:00Z",
+      "reach_score": 0.57,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000016",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.reddit.com/r/ntnu/sak-2",
+      "title": "ReLU NTNU samarbeider med SINTEF om sommerjobber",
+      "snippet": "",
+      "source_type": "reddit",
+      "source_name": "r/ntnu",
+      "published_at": "2026-08-20T19:00:00Z",
+      "fetched_at": "2026-08-20T20:00:00Z",
+      "reach_score": 0.16,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000017",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://digi.no/sak-3",
+      "title": "Hva gjør egentlig ReLU på NTNU?",
+      "snippet": "",
+      "source_type": "web_search",
+      "source_name": "digi.no",
+      "published_at": "2026-08-11T15:00:00Z",
+      "fetched_at": "2026-08-11T16:00:00Z",
+      "reach_score": 0.46,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000018",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://nrk.no/sak-4",
+      "title": "ReLU NTNU holds workshop on responsible AI",
+      "snippet": "",
+      "source_type": "google_news",
+      "source_name": "nrk.no",
+      "published_at": "2026-08-03T01:00:00Z",
+      "fetched_at": "2026-08-03T02:00:00Z",
+      "reach_score": 0.83,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000019",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://universitetsavisa.no/sak-5",
+      "title": "ReLU-studenter i Trondheim bygger chatbot for Studentsamfundet",
+      "snippet": "",
+      "source_type": "google_news",
+      "source_name": "universitetsavisa.no",
+      "published_at": "2026-07-25T09:00:00Z",
+      "fetched_at": "2026-07-25T10:00:00Z",
+      "reach_score": 0.45,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000020",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://adressa.no/sak-6",
+      "title": "ReLU NTNU søker nye styremedlemmer",
+      "snippet": "",
+      "source_type": "gdelt",
+      "source_name": "adressa.no",
+      "published_at": "2026-07-16T04:00:00Z",
+      "fetched_at": "2026-07-16T05:00:00Z",
+      "reach_score": 0.74,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000021",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.reddit.com/r/ntnu/sak-7",
+      "title": "Nytt rekordopptak i ReLU NTNU",
+      "snippet": "",
+      "source_type": "reddit",
+      "source_name": "r/ntnu",
+      "published_at": "2026-07-06T20:00:00Z",
+      "fetched_at": "2026-07-06T21:00:00Z",
+      "reach_score": 0.12,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000900",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "url": "https://www.reddit.com/r/MachineLearning/comments/1abc09/relu_ntnu_course_notes/",
+      "title": "ReLU notes from NTNU TDT4265 lecture",
+      "snippet": "Lecture notes about ReLU and its variants.",
+      "source_type": "reddit",
+      "source_name": "r/MachineLearning",
+      "published_at": "2026-09-16T09:00:00Z",
+      "fetched_at": "2026-09-16T09:00:00Z",
+      "reach_score": 0.71,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": true
+    },
+    {
+      "id": "44444444-0000-4000-8000-000000000999",
+      "profile_id": "22222222-2222-4222-8222-222222222222",
+      "url": "https://news.example/other-org",
+      "title": "Other Org AS opens new office",
+      "snippet": "Private to Other Org's members.",
+      "source_type": "google_news",
+      "source_name": "news.example",
+      "published_at": "2026-09-22T09:00:00Z",
+      "fetched_at": "2026-09-22T09:00:00Z",
+      "reach_score": 0.3,
+      "sentiment": null,
+      "sentiment_score": null,
+      "confidence": null,
+      "classifier_version": null,
+      "hidden": false
+    }
+  ],
+  "runs": [
+    {
+      "id": "55555555-0000-4000-8000-000000000001",
+      "kind": "hourly",
+      "profile_id": null,
+      "started_at": "2026-09-23T08:05:00Z",
+      "finished_at": "2026-09-23T08:07:00Z",
+      "status": "success",
+      "stats": {
+        "fetched": 84,
+        "matched": 6,
+        "inserted": 3,
+        "per_source": {
+          "google_news": 1,
+          "gdelt": 1,
+          "reddit": 1,
+          "web_search": "skipped: not due"
+        }
+      },
+      "error": null
+    },
+    {
+      "id": "55555555-0000-4000-8000-000000000002",
+      "kind": "hourly",
+      "profile_id": null,
+      "started_at": "2026-09-23T07:05:00Z",
+      "finished_at": "2026-09-23T07:06:00Z",
+      "status": "failed",
+      "stats": {
+        "fetched": 12,
+        "matched": 0,
+        "inserted": 0
+      },
+      "error": "gdelt: HTTP 503 Service Unavailable"
+    },
+    {
+      "id": "55555555-0000-4000-8000-000000000003",
+      "kind": "backfill",
+      "profile_id": "11111111-1111-4111-8111-111111111111",
+      "started_at": "2026-09-20T09:00:00Z",
+      "finished_at": "2026-09-20T09:02:00Z",
+      "status": "success",
+      "stats": {
+        "fetched": 310,
+        "matched": 19,
+        "inserted": 19
+      },
+      "error": null
+    },
+    {
+      "id": "55555555-0000-4000-8000-000000000004",
+      "kind": "backfill",
+      "profile_id": "22222222-2222-4222-8222-222222222222",
+      "started_at": "2026-09-13T09:00:00Z",
+      "finished_at": "2026-09-13T09:01:00Z",
+      "status": "success",
+      "stats": {
+        "fetched": 20,
+        "matched": 1,
+        "inserted": 1
+      },
+      "error": null
+    }
+  ],
+  "quota_usage": [
+    {
+      "provider": "tavily",
+      "month": "2026-09-01",
+      "credits_used": 412
+    },
+    {
+      "provider": "exa",
+      "month": "2026-09-01",
+      "credits_used": 0.0
+    },
+    {
+      "provider": "serper",
+      "month": "2026-09-01",
+      "credits_used": 38
+    }
+  ]
+}

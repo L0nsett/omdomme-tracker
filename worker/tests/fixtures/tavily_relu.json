@@ -1,0 +1,5 @@
+{"query": "\"ReLU NTNU\"", "follow_up_questions": null, "answer": null, "images": [], "results": [
+  {"title": "ReLU NTNU – Student organization for AI at NTNU", "url": "https://www.relu-ntnu.no/about", "content": "ReLU NTNU is a student organization in Trondheim that makes applied AI accessible to all students.", "score": 0.91, "raw_content": null},
+  {"title": "Rectified linear unit (ReLU): a practical guide", "url": "https://machinelearningmastery.com/rectified-linear-activation-function", "content": "The rectified linear activation function, or ReLU, is a piecewise linear function...", "score": 0.55, "raw_content": null},
+  {"title": "Ti studentfrivillige som løfter Trondheim", "url": "https://www.nidaros.no/studentfrivillige-trondheim", "content": "Blant dem finner vi AI-miljøet bak @relu_ntnu på Instagram, som samler hundrevis til kurs.", "score": 0.62, "raw_content": null}
+], "response_time": 1.21}

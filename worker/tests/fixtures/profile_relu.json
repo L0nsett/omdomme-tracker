@@ -1,0 +1,19 @@
+{
+  "id": "11111111-1111-4111-8111-111111111111",
+  "name": "ReLU NTNU",
+  "website_url": "https://www.relu-ntnu.no",
+  "social_links": [
+    "https://www.instagram.com/relu_ntnu",
+    "https://www.linkedin.com/company/relu-ntnu"
+  ],
+  "keyword_rules": [
+    {"term": "ReLU NTNU", "context_terms": [], "is_exclusion": false},
+    {"term": "ReLU", "context_terms": ["NTNU", "Trondheim", "studentorganisasjon", "student organization", "linjeforening"], "is_exclusion": false},
+    {"term": "activation function", "context_terms": [], "is_exclusion": true},
+    {"term": "aktiveringsfunksjon", "context_terms": [], "is_exclusion": true},
+    {"term": "leaky ReLU", "context_terms": [], "is_exclusion": true}
+  ],
+  "created_at": "2026-09-20T10:00:00Z",
+  "backfill_status": "done",
+  "last_web_search_at": null
+}

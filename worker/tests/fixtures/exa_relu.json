@@ -1,0 +1,4 @@
+{"requestId": "req_test_0001", "resolvedSearchType": "neural", "results": [
+  {"id": "https://www.digi.no/artikler/studentene-som-bygger-norsk-ai/560123", "title": "Studentene som bygger norsk AI", "url": "https://www.digi.no/artikler/studentene-som-bygger-norsk-ai/560123", "publishedDate": "2026-09-12T00:00:00.000Z", "author": "Redaksjonen", "highlights": ["Linjeforeningen ReLU ved NTNU har vokst til over 400 medlemmer."]},
+  {"id": "https://paperswithcode.com/method/relu", "title": "ReLU Explained | Papers With Code", "url": "https://paperswithcode.com/method/relu", "publishedDate": null, "author": null, "highlights": ["Rectified Linear Units, or ReLUs, are a type of activation function that are linear in the positive dimension."]}
+], "costDollars": {"total": 0.009, "search": {"neural": 0.007}, "contents": {"highlights": 0.002}}}

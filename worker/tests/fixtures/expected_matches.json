@@ -1,0 +1,29 @@
+{
+  "profile": "profile_relu.json",
+  "items": [
+    {"source_type": "google_news", "url": "https://news.google.com/rss/articles/CBMiQmh0dHBzOi8vd3d3LnVuaXZlcnNpdGV0c2F2aXNhLm5vL3JlbHUtaGFja2F0aG9u0gEA?oc=5", "match": true, "reason": "exact term 'ReLU NTNU'"},
+    {"source_type": "google_news", "url": "https://news.google.com/rss/articles/CBMiOGh0dHBzOi8vd3d3LmFkcmVzc2Eubm8vbnloZXRlci9yZWx1LWt2aW5uZXItbWFza2lubGFlcmluZ9IBAA?oc=5", "match": true, "reason": "ambiguous 'ReLU' + context 'studentorganisasjon' (inflected: 'Studentorganisasjonen')"},
+    {"source_type": "google_news", "url": "https://news.google.com/rss/articles/CBMiL2h0dHBzOi8vdG93YXJkc2RhdGFzY2llbmNlLmNvbS9yZWx1LXZzLXNpZ21vaWTSAQA?oc=5", "match": false, "reason": "no context term; exclusion 'activation function'"},
+    {"source_type": "google_news", "url": "https://news.google.com/rss/articles/CBMiNWh0dHBzOi8vd3d3Lm5yay5uby90cm9uZGVsYWcvbnRudS1zdHVkZW50ZXItdmFudC1hadIBAA?oc=5", "match": true, "reason": "exact term 'ReLU NTNU' followed by hyphen"},
+    {"source_type": "google_news", "url": "https://news.google.com/rss/articles/CBMiK2h0dHBzOi8vd3d3LmtvZGUyNC5uby9sZWFreS1yZWx1LWZvcmtsYXJ00gEA?oc=5", "match": false, "reason": "'ReLU' + 'NTNU' would match, but exclusion 'leaky ReLU' wins"},
+
+    {"source_type": "gdelt", "url": "https://www.itavisen.no/2026/09/19/relu-ntnu-nordic-student-ai-conference", "match": true, "reason": "exact term 'ReLU NTNU'"},
+    {"source_type": "gdelt", "url": "https://www.analyticsinsight.net/relu-activation-deep-networks-2026", "match": false, "reason": "ambiguous 'ReLU' without context term"},
+    {"source_type": "gdelt", "url": "https://www.adressa.no/nyheter/trondheim/relu-apen-kildekode-modell", "match": true, "reason": "ambiguous 'ReLU' + context 'Trondheim' ('Trondheim-studenter')"},
+    {"source_type": "gdelt", "url": "https://www.universitetsavisa.no/relu-hackathon", "match": true, "reason": "exact term; same story as a Google News item, stored as a separate mention"},
+
+    {"source_type": "reddit", "url": "https://www.reddit.com/r/ntnu/comments/1abc01/anyone_joining_relu_ntnus_workshop_on_thursday/", "match": true, "reason": "exact term 'ReLU NTNU' (possessive 'ReLU NTNU's')"},
+    {"source_type": "reddit", "url": "https://www.reddit.com/r/MachineLearning/comments/1abc02/d_relu_vs_gelu_in_2026_does_it_still_matter/", "match": false, "reason": "ambiguous 'ReLU' without context term"},
+    {"source_type": "reddit", "url": "https://www.reddit.com/r/norge/comments/1abc03/studentforeningen_relu_pa_ntnu_holder_gratis/", "match": true, "reason": "ambiguous 'ReLU' + context 'NTNU'"},
+    {"source_type": "reddit", "url": "https://www.reddit.com/r/trondheim/comments/1abc04/gratis_aikurs_for_studenter_denne_helgen/", "match": true, "reason": "links to profile website www.relu-ntnu.no (rule 3)"},
+
+    {"source_type": "web_search", "url": "https://www.relu-ntnu.no/about", "match": true, "reason": "exact term; page on the profile's own website"},
+    {"source_type": "web_search", "url": "https://machinelearningmastery.com/rectified-linear-activation-function", "match": false, "reason": "exclusion 'activation function'"},
+    {"source_type": "web_search", "url": "https://www.nidaros.no/studentfrivillige-trondheim", "match": true, "reason": "mentions social username '@relu_ntnu' (rule 3)"},
+    {"source_type": "web_search", "url": "https://www.digi.no/artikler/studentene-som-bygger-norsk-ai/560123", "match": true, "reason": "ambiguous 'ReLU' + context 'NTNU' / 'linjeforening' (in highlight)"},
+    {"source_type": "web_search", "url": "https://paperswithcode.com/method/relu", "match": false, "reason": "exclusion 'activation function'"},
+    {"source_type": "web_search", "url": "https://www.universitetsavisa.no/relu-ntnu-starter-opp", "match": true, "reason": "exact term 'ReLU NTNU' (Serper, backfill)"},
+    {"source_type": "web_search", "url": "https://www.instagram.com/relu_ntnu/", "match": true, "reason": "is the profile's social account; exact term in title"},
+    {"source_type": "web_search", "url": "https://www.ibm.com/think/topics/relu", "match": false, "reason": "exclusion 'activation function'"}
+  ]
+}
