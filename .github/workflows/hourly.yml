@@ -16,6 +16,9 @@ concurrency:
 
 jobs:
   collect:
+    # Scheduled runs start only after setup (SETUP.md: repository variable
+    # WORKER_ENABLED=true), so the cron doesn't fail every hour before the secrets exist.
+    if: github.event_name == 'workflow_dispatch' || vars.WORKER_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
