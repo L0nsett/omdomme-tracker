@@ -14,6 +14,11 @@ on:
         description: Profile UUID
         required: true
         type: string
+      force:
+        description: Run again even if this profile's backfill already ran (spends Serper queries)
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -64,8 +69,12 @@ jobs:
           restore-keys: tranco-
 
       - name: Run backfill
-        run: uv run --no-dev python -m omdomme backfill --profile-id "$PROFILE_ID"
+        run: |
+          args=(backfill --profile-id "$PROFILE_ID")
+          if [[ "$FORCE" == "true" ]]; then args+=(--force); fi
+          uv run --no-dev python -m omdomme "${args[@]}"
         env:
+          FORCE: ${{ inputs.force }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
