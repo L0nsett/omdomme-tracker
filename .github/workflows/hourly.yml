@@ -1,0 +1,53 @@
+name: Hourly collection
+
+on:
+  schedule:
+    # Off-peak minute: GitHub delays or drops jobs scheduled at :00.
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never run two hourly jobs at once; a late run waits for the previous one.
+concurrency:
+  group: hourly-collection
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+
+      - run: uv sync --locked --no-dev
+
+      - name: Cache key for today's Tranco list
+        id: day
+        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      # The worker downloads the Tranco top-1M list at most once a day into worker/.cache.
+      - uses: actions/cache@v4
+        with:
+          path: worker/.cache
+          key: tranco-${{ steps.day.outputs.day }}
+          restore-keys: tranco-
+
+      - name: Run hourly collection
+        run: uv run --no-dev python -m omdomme hourly
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+          SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
