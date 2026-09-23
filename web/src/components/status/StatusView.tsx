@@ -63,6 +63,7 @@ export function StatusView({ runs, quota, now = new Date() }: { runs: Run[]; quo
                 <p className="mt-1.5 text-xs text-neutral-600">
                   {formatQuotaAmount(q.provider, q.used)} of {formatQuotaAmount(q.provider, q.limit)} used
                   {q.lifetime ? " (one-time, backfill only)" : q.resetsOn ? ` · resets ${formatDate(q.resetsOn)}` : ""}
+                  {" · 5% kept in reserve"}
                 </p>
                 {empty && <p className="mt-1 text-xs font-medium text-rose-700">Used up</p>}
               </li>

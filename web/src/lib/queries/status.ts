@@ -39,8 +39,12 @@ function nextMonthKey(now: Date): string {
   return monthKey(new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)));
 }
 
+/** Share of every free quota the worker never spends (SAFETY_MARGIN in worker/omdomme/limits.py). */
+export const QUOTA_SAFETY_MARGIN = 0.05;
+
 /**
- * Remaining free quota per provider. Monthly providers count only the current
+ * Remaining free quota per provider: what the worker may still spend, i.e. the
+ * free limit minus the safety margin minus what has been used. Monthly providers count only the current
  * month's row; lifetime providers (Serper) sum every month.
  */
 export function quotaRemaining(usage: readonly QuotaUsage[], now: Date = new Date()): QuotaRemaining[] {
@@ -57,7 +61,7 @@ export function quotaRemaining(usage: readonly QuotaUsage[], now: Date = new Dat
       label: PROVIDER_LABELS[provider],
       used: rounded,
       limit,
-      remaining: Math.max(0, Math.round((limit - rounded) * 100) / 100),
+      remaining: Math.max(0, Math.round((limit * (1 - QUOTA_SAFETY_MARGIN) - rounded) * 100) / 100),
       usedShare: limit > 0 ? Math.min(1, rounded / limit) : 1,
       unit,
       lifetime,

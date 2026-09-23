@@ -29,6 +29,7 @@ log = logging.getLogger("omdomme")
 # worker/.cache (cached in Actions between runs; ignored by git).
 CACHE_DIR = Path(__file__).resolve().parents[1] / ".cache"
 HTTP_TIMEOUT = httpx.Timeout(30.0, connect=10.0)
+USER_AGENT = "omdomme-tracker/0.1 (+https://github.com/L0nsett/omdomme-tracker)"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -58,7 +59,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     now = datetime.now(UTC)
     with (
         psycopg.connect(settings.database_url, autocommit=True, prepare_threshold=None) as conn,
-        httpx.Client(timeout=HTTP_TIMEOUT, follow_redirects=True) as http,
+        httpx.Client(
+            timeout=HTTP_TIMEOUT, follow_redirects=True, headers={"User-Agent": USER_AGENT}
+        ) as http,
     ):
         quota = PostgresQuotaManager(conn)
         collectors = build_collectors(settings, http, quota)

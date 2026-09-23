@@ -116,9 +116,9 @@ describe("StatusView", () => {
     render(<StatusView runs={fixtureRuns} quota={fixtureQuotaUsage} now={NOW} />);
     expect(screen.getByText("gdelt: HTTP 503 Service Unavailable")).toBeTruthy();
     expect(screen.getAllByText("Failed")).toHaveLength(1);
-    expect(screen.getByTestId("quota-remaining-tavily").textContent).toContain("588");
-    expect(screen.getByTestId("quota-remaining-exa").textContent).toContain("$10.00");
-    expect(screen.getByTestId("quota-remaining-serper").textContent).toContain("2,462");
+    expect(screen.getByTestId("quota-remaining-tavily").textContent).toContain("538");
+    expect(screen.getByTestId("quota-remaining-exa").textContent).toContain("$9.50");
+    expect(screen.getByTestId("quota-remaining-serper").textContent).toContain("2,337");
     expect(screen.getByText("credits / month")).toBeTruthy();
     expect(screen.getByText("queries (one-time)")).toBeTruthy();
     expect(screen.getByText(/412 of 1,000 used/)).toBeTruthy();

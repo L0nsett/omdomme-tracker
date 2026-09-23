@@ -105,14 +105,14 @@ describe("quotaRemaining", () => {
       { provider: "exa", month: "2026-09-01", credits_used: 2.5 },
     ];
     const q = Object.fromEntries(quotaRemaining(usage, NOW).map((r) => [r.provider, r]));
-    expect(q.tavily).toMatchObject({ used: 412, limit: 1000, remaining: 588, lifetime: false, resetsOn: "2026-10-01" });
-    expect(q.exa).toMatchObject({ used: 2.5, remaining: 7.5, unit: "USD / month" });
-    expect(q.serper).toMatchObject({ used: 438, remaining: 2062, lifetime: true, resetsOn: null });
+    expect(q.tavily).toMatchObject({ used: 412, limit: 1000, remaining: 538, lifetime: false, resetsOn: "2026-10-01" });
+    expect(q.exa).toMatchObject({ used: 2.5, remaining: 7, unit: "USD / month" });
+    expect(q.serper).toMatchObject({ used: 438, remaining: 1937, lifetime: true, resetsOn: null });
   });
 
   it("matches the fixture data and never goes below zero", () => {
     const q = quotaRemaining(fixtureQuotaUsage, NOW);
-    expect(q.map((r) => r.remaining)).toEqual([588, 10, 2462]);
+    expect(q.map((r) => r.remaining)).toEqual([538, 9.5, 2337]);
     const over = quotaRemaining([{ provider: "tavily", month: "2026-09-01", credits_used: 1200 }], NOW);
     expect(over[0]).toMatchObject({ remaining: 0, usedShare: 1 });
   });
@@ -120,8 +120,8 @@ describe("quotaRemaining", () => {
   it("resets monthly quotas in a new month and accepts numeric strings", () => {
     const october = new Date("2026-10-02T00:00:00Z");
     const q = quotaRemaining(fixtureQuotaUsage, october);
-    expect(q[0].remaining).toBe(1000);
-    expect(q[2].remaining).toBe(2462); // Serper does not reset
+    expect(q[0].remaining).toBe(950); // 5% safety margin
+    expect(q[2].remaining).toBe(2337); // Serper does not reset
     const str = quotaRemaining([{ provider: "exa", month: "2026-09-01", credits_used: "1.25" as unknown as number }], NOW);
     expect(str[1].used).toBe(1.25);
     expect(monthKey(NOW)).toBe("2026-09-01");
