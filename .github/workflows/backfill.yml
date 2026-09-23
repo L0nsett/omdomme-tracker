@@ -1,0 +1,71 @@
+name: Backfill
+
+# Started by the web app when a profile is created:
+#   POST /repos/{owner}/{repo}/dispatches
+#   {"event_type": "backfill", "client_payload": {"profile_id": "<uuid>"}}
+# or by hand from the Actions tab.
+on:
+  repository_dispatch:
+    types: [backfill]
+  workflow_dispatch:
+    inputs:
+      profile_id:
+        description: Profile UUID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+# One backfill per profile at a time (a group name is not a shell context).
+concurrency:
+  group: backfill-${{ github.event.client_payload.profile_id || inputs.profile_id }}
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: worker
+    env:
+      # Untrusted input: only ever read through this env var, never inlined in a script.
+      PROFILE_ID: ${{ github.event.client_payload.profile_id || inputs.profile_id }}
+    steps:
+      - name: Validate profile id
+        working-directory: .
+        run: |
+          if [[ ! "$PROFILE_ID" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]; then
+            echo "::error::profile_id is not a UUID"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+
+      - run: uv sync --locked --no-dev
+
+      - name: Cache key for today's Tranco list
+        id: day
+        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: worker/.cache
+          key: tranco-${{ steps.day.outputs.day }}
+          restore-keys: tranco-
+
+      - name: Run backfill
+        run: uv run --no-dev python -m omdomme backfill --profile-id "$PROFILE_ID"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+          SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
